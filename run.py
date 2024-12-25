@@ -118,7 +118,8 @@ def check_first_period_goal(game_id):
         for event in events:
             if (
                 event.get("typeCode") == 505  # 505 is the typeCode for a goal
-                and event.get("periodDescriptor", {}).get("number") == 1
+                and event.get("periodDescriptor", {}).get("number") == 1  # First period
+                and event.get("details", {}).get("eventOwnerTeamId") == TEAM_ID  # Blackhawks scored
             ):
                 return True
         return False
