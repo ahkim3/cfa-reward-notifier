@@ -162,21 +162,21 @@ def record_notification_in_dynamodb(game_id):
 
 # Send a notification using AWS SNS.
 def send_goal_notification(game_id):
-    message = f"Goal scored by the Chicago Blackhawks in the first period of game {game_id}! Check your rewards!"
+    message = f"A goal was scored by the Chicago Blackhawks in the first period of a home game today. Open your CFA app for a free reward!"
     try:
         sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message)
         logging.info(f"Notification sent for Game ID {game_id}.")
     except Exception as e:
-        logging.error(f"Error sending notification for Game ID {game_id}: {e}")
+        logging.error(f"Error sending SNS notification for Game ID {game_id}: {e}")
 
     if GROUPME_ENABLED:
-        send_groupme_message(message)
+        send_groupme_message(message, game_id)
     else:
         logging.info("GroupMe is not enabled.")
 
 
 # Send a message via the GroupMe bot.
-def send_groupme_message(message):
+def send_groupme_message(message, game_id):
     url = "https://api.groupme.com/v3/bots/post"
     data = {
         "bot_id": GROUPME_BOT_ID,
@@ -185,9 +185,9 @@ def send_groupme_message(message):
     try:
         response = requests.post(url, json=data)
         response.raise_for_status()
-        logging.info("GroupMe message sent.")
+        logging.info(f"GroupMe message sent for Game ID {game_id}.")
     except requests.RequestException as e:
-        logging.error(f"Failed to send GroupMe message: {e}")
+        logging.error(f"Failed to send GroupMe message for Game ID {game_id}: {e}")
 
 
 if __name__ == "__main__":
