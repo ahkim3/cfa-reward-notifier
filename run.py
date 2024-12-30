@@ -20,6 +20,12 @@ AWS_REGION = os.environ.get("AWS_REGION")
 SNS_TOPIC_ARN = os.environ.get("SNS_TOPIC_ARN")
 DYNAMODB_TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME")
 
+if "GROUPME_BOT_ID" in os.environ:
+    GROUPME_BOT_ID = os.environ.get("GROUPME_BOT_ID")
+    GROUPME_ENABLED = True
+else:
+    GROUPME_ENABLED = False
+
 # AWS Clients
 boto3.setup_default_session(
     aws_access_key_id=AWS_ACCESS_KEY_ID,
@@ -162,6 +168,26 @@ def send_goal_notification(game_id):
         logging.info(f"Notification sent for Game ID {game_id}.")
     except Exception as e:
         logging.error(f"Error sending SNS notification for Game ID {game_id}: {e}")
+
+    if GROUPME_ENABLED:
+        send_groupme_message(message)
+    else:
+        logging.info("GroupMe is not enabled.")
+
+
+# Send a message via the GroupMe bot.
+def send_groupme_message(message):
+    url = "https://api.groupme.com/v3/bots/post"
+    data = {
+        "bot_id": GROUPME_BOT_ID,
+        "text": message,
+    }
+    try:
+        response = requests.post(url, json=data)
+        response.raise_for_status()
+        logging.info("GroupMe message sent.")
+    except requests.RequestException as e:
+        logging.error(f"Failed to send GroupMe message: {e}")
 
 
 if __name__ == "__main__":
