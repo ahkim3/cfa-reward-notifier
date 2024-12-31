@@ -37,5 +37,6 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
           DYNAMODB_TABLE_NAME: ${{ secrets.DYNAMODB_TABLE_NAME }}
+          GROUPME_BOT_ID: ${{ secrets.GROUPME_BOT_ID }}
         run: |
           python run.py
